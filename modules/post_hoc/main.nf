@@ -15,14 +15,15 @@ process posthoc_qc {
 
     errorStrategy 'retry'
     maxRetries 1
-    publishDir "${workflow.launchDir}/results/by_sample_results/${sample_id}/posthoc/", mode: 'copy', failOnError: true
+    publishDir "${workflow.launchDir}/results/by_sample_results/${sample_id}/posthoc/plots", pattern: "*.png", mode: 'copy', failOnError: true
+    publishDir "${workflow.launchDir}/results/by_sample_results/${sample_id}/posthoc/tables", pattern: "*.csv", mode: 'copy', failOnError: true
     container "${params.alignment_image_uri}:${params.alignment_image_version}"
     cpus params.posthoc_cores ?: 2
     memory params.posthoc_mem ?: '2.GB'
     
     script:
     """
-    Rscript bin/qc_module ${sample_id} ${zip_file} ${params.samplesheet} ${params.min_seqs}
+    Rscript bin/qc_module ${sample_id} ${zip_file} ${params.min_seqs} ${params.plotting}
     """
 }
 
